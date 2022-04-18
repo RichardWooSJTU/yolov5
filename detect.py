@@ -107,8 +107,7 @@ def run(
     # Run inference
     model.warmup(imgsz=(1 if pt else bs, 3, *imgsz))  # warmup
     dt, seen = [0.0, 0.0, 0.0], 0
-
-
+    dataset = iter(dataset)
     N = len(dataset)
     # for path, im, im0s, vid_cap, s in dataset:
     for i in range(N):
