@@ -107,15 +107,20 @@ def run(
     # Run inference
     model.warmup(imgsz=(1 if pt else bs, 3, *imgsz))  # warmup
     dt, seen = [0.0, 0.0, 0.0], 0
-    for path, im, im0s, vid_cap, s in dataset:
+
+
+    N = len(dataset)
+    # for path, im, im0s, vid_cap, s in dataset:
+    for i in range(N):
         t1 = time_sync()
+        path, im, im0s, vid_cap, s = next(dataset)
+        t2 = time_sync()
+        dt[0] += t2 - t1
         im = torch.from_numpy(im).to(device)
         im = im.half() if model.fp16 else im.float()  # uint8 to fp16/32
         im /= 255  # 0 - 255 to 0.0 - 1.0
         if len(im.shape) == 3:
             im = im[None]  # expand for batch dim
-        t2 = time_sync()
-        dt[0] += t2 - t1
 
         # Inference
         visualize = increment_path(save_dir / Path(path).stem, mkdir=True) if visualize else False
